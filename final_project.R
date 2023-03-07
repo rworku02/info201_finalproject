@@ -2,7 +2,7 @@ library(shiny)
 library(tidyverse)
 library(rsconnect)
 library(tidyr)
-
+##hi
 totalStats <- read_delim("Count Us In/Total-Table 1.csv")
 
 demographics <- read_delim("Count Us In/Demographics-Table 1.csv")
