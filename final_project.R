@@ -20,7 +20,7 @@ newCause <- cause %>%
 
 
 ui <- fluidPage(tabsetPanel(
-  tabPanel("Overview", sidebarLayout(
+  tabPanel("Overview",titlePanel("Homelessness in Seattle"), sidebarLayout(
     sidebarPanel(
       p("Homlessness is a major problem in America. In December of just last year,
              there were about 582,000 people who were experiencing homelessness. In Seattle,
@@ -32,16 +32,19 @@ ui <- fluidPage(tabsetPanel(
              to homelessness can help up elimiate this issue and to aid those are being affected.")),
     mainPanel(imageOutput("mapImage"))),
   ), 
-  tabPanel("About", titlePanel("Homelessness Statistics"),
+  tabPanel("About", h3("Statistics sample"),
            p("This app uses data collected on homelessness in ", 
              em("Seattle "), "from the years ", strong("1998 - 2020")),
            br(),
            p("Below is a random sample of the total homeless population data in King County:"),
            tableOutput("random")),
-  tabPanel("Plots",
+  tabPanel("Plots", h3("Causes"),
+           p("Many are homeless for various reasons. We don't 
+             always know the reason we see a person in the street and how they 
+             got there. In this section, select a cause and see how many 
+             homeless people were affected"),
            sidebarLayout(
-             sidebarPanel(p("You can select a certain homelessness cause. The number of homeless
-                      people made by each cause differs."),
+             sidebarPanel(
                           fluidRow(
                             column(6,
                                    radioButtons("color", "Choose color",
@@ -58,10 +61,13 @@ ui <- fluidPage(tabsetPanel(
                plotOutput("plot")
              )
            )),
-  tabPanel("Table",
+  tabPanel("Table", h3("Demographics"),
+           p("Homelessnes does not discrimminate. It does not 
+             care about your gender, health, race or age. It can struck you at 
+             any moment. Choose a demographic to see the type of people that may 
+                            be affect."),
            sidebarLayout(
-             sidebarPanel(p("The table displays the data on homelessness depending on
-                      the demographic selected."),
+             sidebarPanel(
                           fluidRow(
                             column(6, uiOutput("checkboxDemo"))
                           )
@@ -87,7 +93,7 @@ ui <- fluidPage(tabsetPanel(
                    the data is diverse and takes many factors into account. Future ideas to
                    advance this project could be to take some personal stories of homeless people
                    in Seattle. We could get the first-hand experience to better understand them.")),
-    mainPanel("hi")
+    mainPanel(imageOutput("barImage"))
   ))
 )
 )
@@ -110,7 +116,8 @@ server <- function(input, output) {
     p <- sample() %>%
       ggplot(aes(factor(Year), Count, fill = factor(Cause))) +
       geom_col() +
-      labs(x = "Year", y = "Count", fill = "Cause") +
+      labs(x = "Year", y = "Count", title = "Bar Plot for Causes of Homelessness",
+           fill = "Cause") +
       scale_fill_manual(values = input$color)
     if(nrow(sample()) == 0) {
       p <- p + labs(title = "Please select a cause")
@@ -152,6 +159,10 @@ server <- function(input, output) {
   })
   output$mapImage <- renderImage({
     list(alt= "Map of homeless population by state", src= "homelessmap.jpg")
+  })
+  output$barImage <- renderImage({
+    list(alt= "Bar plot of the homeless count in 2006-2020 ", src= "homeless_bar.jpg",
+         width = "100%")
   })
 }
 
