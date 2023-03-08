@@ -51,7 +51,10 @@ ui <- fluidPage(
                em("Seattle, WA"), "from", strong("1998-2020.")),
              br(),
              p("Below is a random sample of the homeless population in King 
-               County along with its overall population."),
+               County along with its overall population. This is to show that
+               the issue of homelessness affects the audience of this project.
+               Homeless people aren't only in the city, but have been moving
+               in to the King County areas too."),
              sidebarLayout(
                sidebarPanel(
                  sliderInput("number", "Choose how many samples you want",
