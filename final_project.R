@@ -45,16 +45,16 @@ ui <- fluidPage(tabsetPanel(
              homeless people were affected"),
            sidebarLayout(
              sidebarPanel(
-                          fluidRow(
-                            column(6,
-                                   radioButtons("color", "Choose color",
-                                                choices = c("skyblue", "lawngreen", "orangered",
-                                                                     "purple", "gold"))
-                            ),
-                            column(6,
-                                   uiOutput("checkboxShelter")
-                            )
-                          )
+               fluidRow(
+                 column(6,
+                        radioButtons("color", "Choose color",
+                                     choices = c("skyblue", "lawngreen", "orangered",
+                                                          "purple", "gold"))
+                 ),
+                 column(6,
+                        uiOutput("checkboxShelter")
+                 )
+               )
              ),
              mainPanel(
                textOutput("years"),
@@ -68,9 +68,9 @@ ui <- fluidPage(tabsetPanel(
                             be affect."),
            sidebarLayout(
              sidebarPanel(
-                          fluidRow(
-                            column(6, uiOutput("checkboxDemo"))
-                          )
+               fluidRow(
+                 column(6, uiOutput("checkboxDemo"))
+               )
              ),
              mainPanel(textOutput("h"), 
                        tableOutput("data_table"))
@@ -99,19 +99,28 @@ ui <- fluidPage(tabsetPanel(
 )
 
 server <- function(input, output) {
+  ## For first page
+  output$mapImage <- renderImage({
+    list(alt= "Map of homeless population by state", src= "homelessmap.jpg")
+  })
+  
+  ## For first interactive page
   output$random <- renderTable({
     totalStats %>%  
       sample_n(6)
+  })
+  
+  ## For second interactive page plots
+  sample <- reactive({
+    newCause %>%
+      filter(Cause %in% input$userCause)
   })
   output$checkboxShelter <- renderUI({
     radioButtons("userCause", "Choose cause of homelessness",
                  choices = unique(newCause$Cause)
     )
   })
-  sample <- reactive({
-    newCause %>%
-      filter(Cause %in% input$userCause)
-  })
+  
   output$plot <- renderPlot({
     p <- sample() %>%
       ggplot(aes(factor(Year), Count, fill = factor(Cause))) +
@@ -124,10 +133,6 @@ server <- function(input, output) {
     }
     p
   })
-  output$checkboxDemo <- renderUI({
-    radioButtons("Demo", "Choose a demographic",
-                 choices = unique(newDemographics$Demographic))
-  })
   
   output$years <- renderText({
     years <- sample() %>% pull(Year) %>% unique()
@@ -137,17 +142,22 @@ server <- function(input, output) {
       paste("The data ranges from", min(years), "to", max(years))
     }
   })
+  ## For third interactive page table
+  output$data_table <- renderTable({
+    newDemographics %>% 
+      filter(Demographic == input$Demo)
+  })
+  
+  output$checkboxDemo <- renderUI({
+    radioButtons("Demo", "Choose a demographic",
+                 choices = unique(newDemographics$Demographic))
+  })
   
   table_sample <- reactive({
     s2 <- newDemographics %>% 
       filter(!is.na()) %>% 
       filter(Demographic %in% input$Demo)
     s2
-  })
-  
-  output$data_table <- renderTable({
-    newDemographics %>% 
-      filter(Demographic == input$Demo)
   })
   
   output$h <- renderText({
@@ -157,9 +167,8 @@ server <- function(input, output) {
     n <- sum(!is.na(selected_data$Count))
     output_text <- paste("Selected demographic contains", n, "observations.")
   })
-  output$mapImage <- renderImage({
-    list(alt= "Map of homeless population by state", src= "homelessmap.jpg")
-  })
+  
+  ## For summary page
   output$barImage <- renderImage({
     list(alt= "Bar plot of the homeless count in 2006-2020 ", src= "homeless_bar.jpg",
          width = "100%")
