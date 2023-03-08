@@ -8,7 +8,7 @@ total <- read_delim("Count Us In/Total-Table 1.csv")
 
 ui <- fluidPage(
   tabsetPanel(
-    tabPanel("Overview",titlePanel("Homelessness in Seattle"), sidebarLayout(
+    tabPanel("Overview", titlePanel("Homelessness in Seattle"), sidebarLayout(
       sidebarPanel(
         p("Homlessness is a major problem in America. In December of just last year,
              there were about 582,000 people who were experiencing homelessness. In Seattle,
@@ -21,7 +21,7 @@ ui <- fluidPage(
       mainPanel(imageOutput("mapImage"))),
     ),
     
-    tabPanel("About", h3("Statistics sample"),
+    tabPanel("Sample", h3("Statistics sample"),
              p("This app uses data collected on homelessness in ", 
                em("Seattle, WA"), "from", strong("1998-2020.")),
              br(),
@@ -110,7 +110,7 @@ server <- function(input, output) {
     list(alt= "Map of homeless population by state", src= "homelessmap.jpg")
   })
   
-  ## For the about page
+  ## For the sample page
   output$random <- renderTable({
     total %>%  
       sample_n(6)
