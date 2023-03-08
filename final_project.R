@@ -17,20 +17,13 @@ ui <- fluidPage(
         br(),
         p("With our project, we hope to study the data collected on Seattle's homeless population to
              get a better understanding of the problem. Understanding the cause and factors contributing
-             to homelessness can help up elimiate this issue and to aid those are being affected.")),
-      mainPanel(imageOutput("mapImage"))),
+             to homelessness can help up elimiate this issue and to aid those are being affected.")
+      ),
+      mainPanel(imageOutput("mapImage")))
     ),
     
-    tabPanel("Sample", h3("Statistics sample"),
-             p("This app uses data collected on homelessness in ", 
-               em("Seattle, WA"), "from", strong("1998-2020.")),
-             br(),
-             p("Below is a random sample of the homeless population in King 
-               County along with its overall population."),
-             tableOutput("random")
-    ),
     
-    tabPanel("Sample", h3("Statistics sample"),
+    tabPanel("sample", h3("Homelessness Statistics"),
              p("This app uses data collected on homelessness in ", 
                em("Seattle, WA"), "from", strong("1998-2020.")),
              br(),
@@ -38,64 +31,63 @@ ui <- fluidPage(
                County along with its overall population."),
              sidebarLayout(
                sidebarPanel(
-                 sliderInput("n", "How many samples:",
+                 sliderInput("number", "Choose how many samples you want",
                              min = 1,
                              max = 23,
-                             value = 4),
+                             value = 4)
                ),
-               tableOutput("random")
+               mainPanel(tableOutput("random"))
              )
     ),
     
-    tabPanel("Plot", h3("Possible causes"),
-      p("Many are homeless for various reasons. We don't 
+    tabPanel("Plot", h3("Causes"),
+    p("Many are homeless for various reasons. We don't 
              always know the reason we see a person in the street and how they 
              got there. In this section, select a cause and see how many 
-             homeless people were affected"), 
-      sidebarLayout(
-        sidebarPanel(
-          p("Select a cause of homelessness and see how many are affected each 
-            year."),
-          fluidRow(
-            column(6, 
-                   radioButtons("color", "Choose color", 
-                                choices = c("skyblue", "darkseagreen", "khaki", 
+             homeless people were affected"),
+    sidebarLayout(
+      sidebarPanel(
+        p("Select a cause of homelessness and see how many are affected each 
+          year."),
+        fluidRow(
+          column(6,
+                 radioButtons("color", "Choose color",
+                              choices = c("skyblue", "darkseagreen", "khaki", 
                                                    "orange", "tan", "sienna", 
                                                    "salmon", "pink", "thistle"))
-            ),
-            column(6,
+          ),
+          column(6,
                  uiOutput("checkboxShelter")
-            )
           )
-        ),
-        mainPanel(
-          plotOutput("plot"),
-          textOutput("years")
         )
-      )  
-    ),
+      ),
+      mainPanel(
+        plotOutput("plot"),
+        textOutput("years")
+      )
+    )),
     
     tabPanel("Table", h3("Demographics"), 
-      p("Homelessnes does not discrimminate. It does not 
+    p("Homelessnes does not discrimminate. It does not 
              care about your gender, health, race or age. It can struck you at 
              any moment. Choose a demographic to see the type of people that may 
                             be affect."),
-      sidebarLayout(
-        sidebarPanel(
-          p("Here, you may see the homeless data based on the demographic you 
-            choose."),
-          fluidRow(
-            column(6,
-                   uiOutput("checkboxDemographics")
-            ),
-          )
-        ),
-        mainPanel(
-          textOutput("message"),
-          tableOutput("data_table")
-        )         
-      )
-    ),
+    sidebarLayout(
+      sidebarPanel(
+        p("Here, you may see the homeless data based on the demographic you 
+          choose."),
+        fluidRow(
+          column(6,
+                 uiOutput("checkboxDemographics")
+          ),
+        )
+      ),
+      mainPanel(
+        textOutput("message"),
+        tableOutput("data_table")
+      )         
+    )),
+    
     tabPanel("Summary", sidebarLayout(
       sidebarPanel(h3("Key takeaways:"),
                    p("After analyzing our data, we came to the conclusion that most of the
@@ -108,7 +100,7 @@ ui <- fluidPage(
                    help they need. Homeless people have to pay for their physical needs such as food,
                    and psychiatric needs are lower on their priority list."),
                    br(),
-                   h3("Data quality:"),
+                   h3("Data qualityL"),
                    p("We thought the dataset was of high quality and was clear to read. The dataset
                    was well organized and easy to navigate. We believe it has unbiased results since
                    the data is diverse and takes many factors into account. Future ideas to
@@ -116,16 +108,16 @@ ui <- fluidPage(
                    in Seattle. We could get the first-hand experience to better understand them.")
       ),
       mainPanel(imageOutput("barImage"))
-    )
-    )
+    ))
   )
 )
 
 server <- function(input, output) {
-  ## For the first page
+  ## For first page
   output$mapImage <- renderImage({
     list(alt= "Map of homeless population by state", src= "homelessmap.jpg")
   })
+  
   
   ## For the sample page
   output$random <- renderTable({
@@ -197,7 +189,7 @@ server <- function(input, output) {
     paste("Selected demographic contains", n, "observations.")
   })
   
-  ## For the last page
+  ## For the summary page
   output$barImage <- renderImage({
     list(alt= "Bar plot of the homeless count in 2006-2020 ", src= "homeless_bar.jpg",
          width = "100%")
