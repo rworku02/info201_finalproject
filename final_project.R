@@ -6,6 +6,8 @@ library(tidyr)
 #hola
 ## konichiwa
 totalStats <- read_delim("Count Us In/Total-Table 1.csv")
+totalStats %>% 
+  group_by(Year)
 
 demographics <- read_delim("Count Us In/Demographics-Table 1.csv")
 newDemographics <- demographics %>% 
@@ -39,7 +41,11 @@ ui <- fluidPage(tabsetPanel(
              em("Seattle "), "from the years ", strong("1998 - 2020")),
            br(),
            p("Below is a random sample of the total homeless population data in King County:"),
-           tableOutput("random")),
+           sidebarLayout(
+             sidebarPanel(selectInput("userSelect")),
+             mainPanel(tableOutput("stats_table")),
+           ),
+           ),
   tabPanel("Plots", h3("Causes"),
            p("Many are homeless for various reasons. We don't 
              always know the reason we see a person in the street and how they 
@@ -105,15 +111,35 @@ server <- function(input, output) {
     totalStats %>%  
       sample_n(6)
   })
+  ######
+  output$selectYear <- renderUI({
+    selectInput("userSelect", "Choose a demographic",
+                 choices = unique(totalStats$Year))
+  })
+  select_sample <- reactive({
+    s3 <- totalStats %>% 
+      filter(!is.na()) %>% 
+      filter(Year %in% input$userSelect)
+    s3
+  })
+  
+  output$stats_table <- renderTable({
+    totalStats %>% 
+      filter(Year == input$userSelect)
+  })
+  
+  #######
   output$checkboxShelter <- renderUI({
     radioButtons("userCause", "Choose cause of homelessness",
                  choices = unique(newCause$Cause)
     )
   })
+  
   sample <- reactive({
     newCause %>%
       filter(Cause %in% input$userCause)
   })
+  
   output$plot <- renderPlot({
     p <- sample() %>%
       ggplot(aes(factor(Year), Count, fill = factor(Cause))) +
@@ -126,6 +152,7 @@ server <- function(input, output) {
     }
     p
   })
+  
   output$checkboxDemo <- renderUI({
     radioButtons("Demo", "Choose a demographic",
                  choices = unique(newDemographics$Demographic))
@@ -159,9 +186,11 @@ server <- function(input, output) {
     n <- sum(!is.na(selected_data$Count))
     output_text <- paste("Selected demographic contains", n, "observations.")
   })
+  
   output$mapImage <- renderImage({
     list(alt= "Map of homeless population by state", src= "homelessmap.jpg")
   })
+  
   output$barImage <- renderImage({
     list(alt= "Bar plot of the homeless count in 2006-2020 ", src= "homeless_bar.jpg",
          width = "100%")
