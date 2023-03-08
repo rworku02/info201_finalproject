@@ -30,56 +30,24 @@ ui <- fluidPage(
              tableOutput("random")
     ),
     
-    tabPanel("Plot", h3("Possible causes"),
-
-             p("Many are homeless for various reasons. We don't 
-             always know the reason we see a person in the street and how they 
-             got there. In this section, select a cause and see how many 
-             homeless people were affected"), 
+    tabPanel("Sample", h3("Statistics sample"),
+             p("This app uses data collected on homelessness in ", 
+               em("Seattle, WA"), "from", strong("1998-2020.")),
+             br(),
+             p("Below is a random sample of the homeless population in King 
+               County along with its overall population."),
              sidebarLayout(
                sidebarPanel(
-                 p("Select a cause of homelessness and see how many are affected each 
-            year."),
-                 fluidRow(
-                   column(6, 
-                          radioButtons("color", "Choose color", 
-                                       choices = c("skyblue", "darkseagreen", "khaki", 
-                                                            "orange", "tan", "sienna", 
-                                                            "salmon", "pink", "thistle"))
-                   ),
-                   column(6,
-                          uiOutput("checkboxShelter")
-                   )
-                 )
+                 sliderInput("n", "How many samples:",
+                             min = 1,
+                             max = 23,
+                             value = 4),
                ),
-               mainPanel(
-                 plotOutput("plot"),
-                 textOutput("years")
-               )
-             )  
+               tableOutput("random")
+             )
     ),
     
-    tabPanel("Table", h3("Demographics"), 
-             p("Homelessnes does not discrimminate. It does not 
-             care about your gender, health, race or age. It can struck you at 
-             any moment. Choose a demographic to see the type of people that may 
-                            be affect."),
-             sidebarLayout(
-               sidebarPanel(
-                 p("Here, you may see the homeless data based on the demographic you 
-            choose."),
-                 fluidRow(
-                   column(6,
-                          uiOutput("checkboxDemographics")
-                   ),
-                 )
-               ),
-               mainPanel(
-                 textOutput("message"),
-                 tableOutput("data_table")
-               )         
-             ),
-
+    tabPanel("Plot", h3("Possible causes"),
       p("Many are homeless for various reasons. We don't 
              always know the reason we see a person in the street and how they 
              got there. In this section, select a cause and see how many 
@@ -127,7 +95,6 @@ ui <- fluidPage(
           tableOutput("data_table")
         )         
       )
-
     ),
     tabPanel("Summary", sidebarLayout(
       sidebarPanel(h3("Key takeaways:"),
