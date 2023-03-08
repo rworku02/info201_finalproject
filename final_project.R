@@ -100,7 +100,7 @@ ui <- fluidPage(
                    help they need. Homeless people have to pay for their physical needs such as food,
                    and psychiatric needs are lower on their priority list."),
                    br(),
-                   h3("Data qualityL"),
+                   h3("Data quality"),
                    p("We thought the dataset was of high quality and was clear to read. The dataset
                    was well organized and easy to navigate. We believe it has unbiased results since
                    the data is diverse and takes many factors into account. Future ideas to
@@ -120,9 +120,15 @@ server <- function(input, output) {
   
   
   ## For the sample page
+  first_sample <- reactive({
+    s <- total %>% 
+      sample_n(input$number)
+    s
+  })
+  
+  
   output$random <- renderTable({
-    total %>%  
-      sample_n(6)
+    first_sample()
   })
   
   ## For the plot page
